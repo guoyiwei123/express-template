@@ -1,10 +1,10 @@
 import {MongoDB} from "../types/config";
 // mongoDB连接配置
 export const mongoDB: MongoDB = {
-    host: "cluster0.jg62o.mongodb.net",
-    username: "ninggure",
-    password: "1299622716",
-    database: "movie-online"
+    host: "",
+    username: "",
+    password: "",
+    database: ""
 }
 
 // 端口号
