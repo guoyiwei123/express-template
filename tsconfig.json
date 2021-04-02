@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"target": "es2020",
+        "rootDir": "src",
+		"outDir": "./dist",
+        "strict": true,
+		"allowJs": false,
+		"sourceMap": true,
+		"module": "commonjs",
+		"moduleResolution": "node"
+	},
+	"include": ["./src/**/*"],
+	"exclude": ["node_modules", "src/types/*.ts"]
+}
