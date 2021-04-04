@@ -1,4 +1,7 @@
 import {Request, Response} from "express";
+export interface CtrlRoute{
+    [propName: string]: (req: Request, res: Response) => Promise<void> | void;
+}
 // mongodb连接配置
 export interface MongoDB{
     host?: string
@@ -6,10 +9,4 @@ export interface MongoDB{
     username?: string
     password?: string
     database?: string
-}
-// 路由配置
-export interface Route{
-    type: "get" | "post" | "put" | "delete"
-    path: string | RegExp
-    handler: (req: Request, res: Response) => Promise<void> | void
 }
