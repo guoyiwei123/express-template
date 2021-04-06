@@ -18,7 +18,7 @@ getBreadthFileList(ctrlPath).forEach((item: string) => {
     const routePath = path.replace(ctrlPath, "").replace("\\", "/");
     Object.keys(ctrlRoute).forEach((key: string | symbol) => {
         const route = String(key);
-        router.all(`${routePath}/${route == "index"?"": route}`, async (req: Request, res: Response, next: NextFunction) =>{
+        router.all(`/api${routePath}${routePath == "/"?"": "/"}${route == "index"?"": route}`, async (req: Request, res: Response, next: NextFunction) =>{
             try{
                 await ctrlRoute[route](req, res);
             }catch(e){
