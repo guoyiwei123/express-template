@@ -1,6 +1,6 @@
-import {MongoDB} from "../types/config";
+import {MongoDBType} from "../types/config";
 // mongoDB连接配置
-export const mongoDB: MongoDB = {
+export const mongoDB: MongoDBType = {
     host: "",
     username: "",
     password: "",

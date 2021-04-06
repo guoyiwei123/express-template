@@ -2,22 +2,27 @@ import {resolve} from "path";
 import * as express from "express";
 import {Express, Router, Request, Response, NextFunction} from "express";
 import {connect} from "mongoose";
-import {port, mongoDB} from "./config";
+import {json, urlencoded} from "body-parser";
 import {getBreadthFileList} from "@ninggure/utils/fileList";
-import {CtrlRoute} from "./types/config";
+import {port, mongoDB} from "./config";
+import {CtrlRouteType} from "./types/config";
 
 // 实例化express对象
 const app: Express = express();
+// application/json
+app.use(json());
+// application/x-www-form-urlencoded
+app.use(urlencoded({ extended: true })); 
 /** 配置路由 **/
 const router: Router = Router();
 // 控制器路径
 const ctrlPath: string = resolve(__dirname, "./controllers");
 getBreadthFileList(ctrlPath).forEach((item: string) => {
     const path: string = item.replace(/\.[^.]*$/, '');
-    const ctrlRoute: CtrlRoute = require(path);
-    const routePath = path.replace(ctrlPath, "").replace("\\", "/");
+    const ctrlRoute: CtrlRouteType = require(path);
+    const routePath: string = path.replace(ctrlPath, "").replace("\\", "/").replace(/index$/, "").replace(/index\//, "/");
     Object.keys(ctrlRoute).forEach((key: string | symbol) => {
-        const route = String(key);
+        const route: string = String(key);
         router.all(`/api${routePath}${routePath == "/"?"": "/"}${route == "index"?"": route}`, async (req: Request, res: Response, next: NextFunction) =>{
             try{
                 await ctrlRoute[route](req, res);
