@@ -4,7 +4,8 @@ import {Express, Router, Request, Response, NextFunction} from "express";
 import {connect} from "mongoose";
 import {json, urlencoded} from "body-parser";
 import {getBreadthFileList} from "@ninggure/utils/fileList";
-import {port, mongoDB} from "./config";
+import {successLogger, catchLogger} from "./utils/logger";
+import {port, mongoDB, openLogger} from "./config";
 import {CtrlRouteType} from "./types/config";
 
 // 实例化express对象
@@ -23,9 +24,10 @@ getBreadthFileList(ctrlPath).forEach((item: string) => {
     const routePath: string = path.replace(ctrlPath, "").replace("\\", "/").replace(/index$/, "").replace(/index\//, "/");
     Object.keys(ctrlRoute).forEach((key: string | symbol) => {
         const route: string = String(key);
-        router.all(`/api${routePath}${routePath == "/"?"": "/"}${route == "index"?"": route}`, async (req: Request, res: Response, next: NextFunction) =>{
+        router.all(`/api${routePath}${routePath == "/"?"": "/"}${route == "index"?"": route}`, async (req: Request, res: Response, next: NextFunction) => {
             try{
                 await ctrlRoute[route](req, res);
+                successLogger(req, res);
             }catch(e){
                 next(e);
             }
@@ -39,24 +41,27 @@ router.all("*", (req: Request, res: Response) => {
 app.use(router);
 // 错误处理
 app.use((err: Error,req: Request, res: Response, next: NextFunction) => {
-    console.log(err.stack);
+    catchLogger(req, res, err);
     res.json({statusCode: 500, message: "Server Error", data: null});
     next();
 });
 // mongoDb连接
 const url: string = `mongodb+srv://${mongoDB.username?`${mongoDB.username}:${mongoDB.password}@`: ""}${mongoDB.host}${mongoDB.port?`:${mongoDB.port}`:""}/${mongoDB.database}`;
-connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-    poolSize: 4
-}).then(() => {
-    console.log("connect db success");
-    app.listen(port, () => {
-        console.log(`Server running on http://localhost:${port}`);
-    })
-}).catch(err => {
-    throw err;
+// connect(url, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//     useFindAndModify: false,
+//     useCreateIndex: true,
+//     poolSize: 4
+// }).then(() => {
+//     console.log("connect db success");
+//     app.listen(port, () => {
+//         console.log(`Server running on http://localhost:${port}`);
+//     })
+// }).catch(err => {
+//     throw err;
+// })
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
 })
 app.listen()
