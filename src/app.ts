@@ -36,17 +36,18 @@ getBreadthFileList(ctrlPath).forEach((item: string) => {
 });
 // 404处理
 router.all("*", (req: Request, res: Response) => {
+    catchLogger(req, res, "Not Found");
     res.json({statusCode: 404, message: "Page not Found", data: null});
 })
 app.use(router);
 // 错误处理
 app.use((err: Error,req: Request, res: Response, next: NextFunction) => {
-    catchLogger(req, res, err);
+    catchLogger(req, res, err.stack || "");
     res.json({statusCode: 500, message: "Server Error", data: null});
     next();
 });
 // mongoDb连接
-const url: string = `mongodb+srv://${mongoDB.username?`${mongoDB.username}:${mongoDB.password}@`: ""}${mongoDB.host}${mongoDB.port?`:${mongoDB.port}`:""}/${mongoDB.database}`;
+// const url: string = `mongodb+srv://${mongoDB.username?`${mongoDB.username}:${mongoDB.password}@`: ""}${mongoDB.host}${mongoDB.port?`:${mongoDB.port}`:""}/${mongoDB.database}`;
 // connect(url, {
 //     useNewUrlParser: true,
 //     useUnifiedTopology: true,
