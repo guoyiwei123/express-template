@@ -10,6 +10,7 @@ import {CtrlRouteType} from "./types/config";
 
 // 实例化express对象
 const app: Express = express();
+app.set('trust proxy', true);
 // application/json
 app.use(json());
 // application/x-www-form-urlencoded

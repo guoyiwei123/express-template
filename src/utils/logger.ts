@@ -2,6 +2,7 @@ import {resolve} from "path";
 import {existsSync, mkdirSync, writeFile} from "fs";
 import {Request, Response} from "express";
 import * as moment from "moment";
+import {getRealIp} from "./network";
 const loggerPath = resolve(__dirname, "../../runtime");
 
 // 写入日志
@@ -21,13 +22,13 @@ export const writeLogger = (logName: string, context: string) => {
 
 // 响应成功日志保存
 export const successLogger = (req: Request, res: Response) => {
-    writeLogger("success", `${moment().format("YYYY-MM-DD HH:mm:ss")} [${req.ips[0] || req.ip}] ${req.method} ${res.statusCode} ${req.protocol}://${req.hostname}${req.originalUrl}`+ "\n" 
+    writeLogger("success", `${moment().format("YYYY-MM-DD HH:mm:ss")} [${getRealIp(req)}] ${req.method} ${res.statusCode} ${req.protocol}://${req.hostname}${req.originalUrl}`+ "\n" 
     + `body: ${JSON.stringify(req.body)}` + "\n\n");
 }
 
 // 响应异常日志保存
 export const catchLogger = (req: Request, res: Response, err: string) => {
-    writeLogger("error", `${moment().format("YYYY-MM-DD HH:mm:ss")} [${req.ips[0] || req.ip}] ${req.method} ${res.statusCode} ${req.protocol}://${req.hostname}${req.originalUrl}`+ "\n" 
+    writeLogger("error", `${moment().format("YYYY-MM-DD HH:mm:ss")} [${getRealIp(req)}] ${req.method} ${res.statusCode} ${req.protocol}://${req.hostname}${req.originalUrl}`+ "\n" 
     + `body: ${JSON.stringify(req.body)}` + "\n" 
     + `errMsg: ${err}` + "\n\n");
 }
