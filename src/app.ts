@@ -28,12 +28,13 @@ getBreadthFileList(ctrlPath).forEach((item: string) => {
     const routePath: string = path.replace(ctrlPath, "").replace("\\", "/").replace(/index$/, "").replace(/index\//, "/");
     Object.keys(ctrlRoute).forEach((key: string | symbol) => {
         const route: string = String(key);
-        router.all(`/api${routePath}${routePath == "/"?"": "/"}${route == "index"?"": route}`, async (req: Request, res: Response, next: NextFunction) => {
+        router.all(`/api${routePath}${routePath == "/"?"": "/"}${route == "index"?"": route}`, async (req: Request, res: Response) => {
             try{
                 await ctrlRoute[route](req, res);
                 successLogger(req, res);
-            }catch(e){
-                next(e);
+            }catch(err){
+                res.json({statusCode: 500, message: "Server Error", data: null});
+                catchLogger(req, res, err.stack || "");
             }
         });
     })
@@ -44,12 +45,6 @@ router.all("*", (req: Request, res: Response) => {
     res.json({statusCode: 404, message: "Page not Found", data: null});
 })
 app.use(router);
-// 错误处理
-app.use((err: Error,req: Request, res: Response, next: NextFunction) => {
-    catchLogger(req, res, err.stack || "");
-    res.json({statusCode: 500, message: "Server Error", data: null});
-    next();
-});
 // mongoDb连接
 // const url: string = `mongodb+srv://${mongoDB.username?`${mongoDB.username}:${mongoDB.password}@`: ""}${mongoDB.host}${mongoDB.port?`:${mongoDB.port}`:""}/${mongoDB.database}`;
 // connect(url, {

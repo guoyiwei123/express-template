@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.port = exports.mongoDB = void 0;
+exports.openLogger = exports.port = exports.mongoDB = void 0;
 // mongoDB连接配置
 exports.mongoDB = {
     host: "",
@@ -10,4 +10,6 @@ exports.mongoDB = {
 };
 // 端口号
 exports.port = 10004;
+// 是否开启日志系统
+exports.openLogger = true;
 //# sourceMappingURL=index.js.map
