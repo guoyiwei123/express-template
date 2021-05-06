@@ -1,11 +1,12 @@
 import {resolve} from "path";
 import * as express from "express";
-import {Express, Router, Request, Response, NextFunction} from "express";
+import {Express, Router, Request, Response} from "express";
 import {connect} from "mongoose";
 import {json, urlencoded} from "body-parser";
+import * as moment from "moment";
 import {getBreadthFileList} from "@ninggure/utils/fileList";
-import {successLogger, catchLogger} from "./utils/logger";
-import {port, mongoDB, openLogger} from "./config";
+import {successLogger, catchLogger, writeLogger} from "./utils/logger";
+import {port, mongoDB} from "./config";
 import {CtrlRouteType} from "./types/config";
 
 // 实例化express对象
@@ -42,22 +43,23 @@ router.all("*", (req: Request, res: Response) => {
 })
 app.use(router);
 // mongoDb连接
-// const url: string = `mongodb+srv://${mongoDB.username?`${mongoDB.username}:${mongoDB.password}@`: ""}${mongoDB.host}${mongoDB.port?`:${mongoDB.port}`:""}/${mongoDB.database}`;
-// connect(url, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//     useFindAndModify: false,
-//     useCreateIndex: true,
-//     poolSize: 4
-// }).then(() => {
-//     console.log("connect db success");
-//     app.listen(port, () => {
-//         console.log(`Server running on http://localhost:${port}`);
-//     })
-// }).catch(err => {
-//     throw err;
-// })
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+const url: string = `mongodb+srv://${mongoDB.username?`${mongoDB.username}:${mongoDB.password}@`: ""}${mongoDB.host}${mongoDB.port?`:${mongoDB.port}`:""}/${mongoDB.database}`;
+connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+    poolSize: 4
+}).then(() => {
+    writeLogger("system", `${moment().format("YYYY-MM-DD HH:mm:ss")} connect mongodb success!!` + "\n\n");
+    app.listen(port, () => {
+        writeLogger("system", `${moment().format("YYYY-MM-DD HH:mm:ss")} Server running on http://0.0.0.0:${port}` + "\n\n");
+    })
+}).catch(err => {
+    writeLogger("system", `${moment().format("YYYY-MM-DD HH:mm:ss")} connect mongodb error: ${err.stack || ""}` + "\n\n");
+    app.listen(port, () => {
+        writeLogger("system", `${moment().format("YYYY-MM-DD HH:mm:ss")} Server running on http://0.0.0.0:${port}` + "\n\n");
+    })
 })
+
 app.listen()
