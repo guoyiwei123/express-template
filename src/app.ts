@@ -10,13 +10,9 @@ import {CtrlRouteType} from "./types/config";
 
 // 实例化express对象
 const app: Express = express();
-// 开启获取前端代理ip列表
 app.set("trust proxy", true);
-// 关闭x-powered-by响应头
 app.set("x-powered-by", false);
-// application/json
 app.use(json());
-// application/x-www-form-urlencoded
 app.use(urlencoded({ extended: true })); 
 /** 配置路由 **/
 const router: Router = Router();
