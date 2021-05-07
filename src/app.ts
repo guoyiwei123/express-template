@@ -51,14 +51,14 @@ connect(url, {
     useCreateIndex: true,
     poolSize: 4
 }).then(() => {
-    writeLogger("system", `${moment().format("YYYY-MM-DD HH:mm:ss")} connect mongodb success!!` + "\n\n");
+    writeLogger("system", `connect mongodb success!!`);
     app.listen(port, () => {
-        writeLogger("system", `${moment().format("YYYY-MM-DD HH:mm:ss")} Server running on http://0.0.0.0:${port}` + "\n\n");
+        writeLogger("system", `Server running on http://0.0.0.0:${port}`);
     })
 }).catch(err => {
-    writeLogger("system", `${moment().format("YYYY-MM-DD HH:mm:ss")} connect mongodb error: ${err.stack || ""}` + "\n\n");
+    writeLogger("system", `connect mongodb error: ${err.stack || ""}`);
     app.listen(port, () => {
-        writeLogger("system", `${moment().format("YYYY-MM-DD HH:mm:ss")} Server running on http://0.0.0.0:${port}` + "\n\n");
+        writeLogger("system", `Server running on http://0.0.0.0:${port}`);
     })
 })
 
