@@ -3,7 +3,6 @@ import * as express from "express";
 import {Express, Router, Request, Response} from "express";
 import {connect} from "mongoose";
 import {json, urlencoded} from "body-parser";
-import * as moment from "moment";
 import {getBreadthFileList} from "@ninggure/utils/fileList";
 import {successLogger, catchLogger, writeLogger} from "./utils/logger";
 import {port, mongoDB} from "./config";

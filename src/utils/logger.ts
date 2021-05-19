@@ -12,7 +12,7 @@ const wsList = {}
 // 写入日志
 export const writeLogger = (logName: string, context: string) => {
     // 获取当前日期
-    const dateTime = moment().format("YYYY-MM-DD");
+    const dateTime = moment().utcOffset(8).format("YYYY-MM-DD");
     // 获取写入流状态
     let wsObj: WsObjType = Reflect.get(wsList, logName);
     // 判断当前写入对象是否存在。并且为当天的写入流
@@ -34,7 +34,7 @@ export const writeLogger = (logName: string, context: string) => {
     }
     // 将数据写入到写入流
     wsObj.ws.cork();
-    wsObj.ws.write(`${moment().format("YYYY-MM-DD HH:mm:ss")} ${context}` + "\n\n");
+    wsObj.ws.write(`${moment().utcOffset(8).format("YYYY-MM-DD HH:mm:ss")} ${context}` + "\n\n");
     // 写入完成释放内存
     process.nextTick(() => {
         wsObj.ws.uncork();

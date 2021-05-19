@@ -6,12 +6,13 @@ const express_1 = require("express");
 const mongoose_1 = require("mongoose");
 const body_parser_1 = require("body-parser");
 const fileList_1 = require("@ninggure/utils/fileList");
+const logger_1 = require("./utils/logger");
 const config_1 = require("./config");
 // 实例化express对象
 const app = express();
-// application/json
+app.set("trust proxy", true);
+app.set("x-powered-by", false);
 app.use(body_parser_1.json());
-// application/x-www-form-urlencoded
 app.use(body_parser_1.urlencoded({ extended: true }));
 /** 配置路由 **/
 const router = express_1.Router();
@@ -23,27 +24,24 @@ fileList_1.getBreadthFileList(ctrlPath).forEach((item) => {
     const routePath = path.replace(ctrlPath, "").replace("\\", "/").replace(/index$/, "").replace(/index\//, "/");
     Object.keys(ctrlRoute).forEach((key) => {
         const route = String(key);
-        router.all(`/api${routePath}${routePath == "/" ? "" : "/"}${route == "index" ? "" : route}`, async (req, res, next) => {
+        router.all(`/api${routePath}${routePath == "/" ? "" : "/"}${route == "index" ? "" : route}`, async (req, res) => {
             try {
                 await ctrlRoute[route](req, res);
+                logger_1.successLogger(req, res);
             }
-            catch (e) {
-                next(e);
+            catch (err) {
+                res.json({ statusCode: 500, message: "Server Error", data: null });
+                logger_1.catchLogger(req, res, err.stack || "");
             }
         });
     });
 });
 // 404处理
 router.all("*", (req, res) => {
+    logger_1.catchLogger(req, res, "Not Found");
     res.json({ statusCode: 404, message: "Page not Found", data: null });
 });
 app.use(router);
-// 错误处理
-app.use((err, req, res, next) => {
-    console.log(err.stack);
-    res.json({ statusCode: 500, message: "Server Error", data: null });
-    next();
-});
 // mongoDb连接
 const url = `mongodb+srv://${config_1.mongoDB.username ? `${config_1.mongoDB.username}:${config_1.mongoDB.password}@` : ""}${config_1.mongoDB.host}${config_1.mongoDB.port ? `:${config_1.mongoDB.port}` : ""}/${config_1.mongoDB.database}`;
 mongoose_1.connect(url, {
@@ -53,12 +51,15 @@ mongoose_1.connect(url, {
     useCreateIndex: true,
     poolSize: 4
 }).then(() => {
-    console.log("connect db success");
+    logger_1.writeLogger("system", `connect mongodb success!!`);
     app.listen(config_1.port, () => {
-        console.log(`Server running on http://localhost:${config_1.port}`);
+        logger_1.writeLogger("system", `Server running on http://0.0.0.0:${config_1.port}`);
     });
 }).catch(err => {
-    throw err;
+    logger_1.writeLogger("system", `connect mongodb error: ${err.stack || ""}`);
+    app.listen(config_1.port, () => {
+        logger_1.writeLogger("system", `Server running on http://0.0.0.0:${config_1.port}`);
+    });
 });
 app.listen();
 //# sourceMappingURL=app.js.map
