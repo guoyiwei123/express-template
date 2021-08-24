@@ -2,10 +2,10 @@
   "name": "express-template",
   "version": "1.0.0",
   "description": "",
-  "main": "./src/app.ts",
+  "main": "./src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./src/app.ts",
+    "dev": "nodemon ./src/app.js",
     "watch": "tsc -w",
     "build": "tsc"
   },
@@ -16,6 +16,7 @@
     "@ninggure/utils": "^1.0.3",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "express-validator": "^6.12.1",
     "moment": "^2.29.1",
     "mongoose": "^5.12.3"
   },

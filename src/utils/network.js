@@ -1,5 +1,4 @@
-import {Request} from "express";
 // 获取真实ip
-export const getRealIp = (req: Request) => {
+exports.getRealIp = (req) => {
     return req.ips[0] || req.ip || req.socket.localAddress;
 }
