@@ -19,8 +19,6 @@
 ## 命令
 ```
 $ npm run dev 开启本地服务器
-$ npm run watch 开启文件打包监听模式
-$ npm run build 打包
 ```
 
 ## 配置
