@@ -11,11 +11,13 @@ app.set("x-powered-by", false);
 app.use(json());
 app.use(urlencoded({ extended: true })); 
 app.response.sendData = function({statusCode=0, message="", data=null}){
+    // 定义格式
     const responseData = {
         statusCode,
         message,
         data
     };
+    // 写入日志
     successLogger(this, responseData);
     return this.send(responseData);
 }
@@ -31,7 +33,6 @@ const setRouter = ({route, handler, method="all"}) => {
             errorCatch?
                 res.json({statusCode: 500, message: "Server Error", data: null})
                 : res.end(`${err.stack || ""}`);
-            
         }
     });
 }

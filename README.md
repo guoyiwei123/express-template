@@ -1,3 +1,6 @@
+
+# Express-Template
+该项目快速搭建`Express`项目, 包括`路由配置`，`日志系统`，`错误捕获`，及一些自定义方法等，方便使用。
 ## 目录结构
 ```
 -   dist 打包之后目录
@@ -18,6 +21,25 @@
 $ npm run dev 开启本地服务器
 $ npm run watch 开启文件打包监听模式
 $ npm run build 打包
+```
+
+## 配置
+### 基础配置
+-   port: 端口号
+-   errorCatch: 是否开启错误捕获
+
+### 路由配置
+格式:
+```
+// 默认为支持所有请求方式
+{route: "/", handler: index}
+
+// 也可以设置请求方式
+{route: "/", handler: index, method: "get"},
+{route: "/setData", handler: index, method: "post"}
+
+// method设置为all时支持所有请求方式
+{route: "/setData", handler: index, method: "all"}
 ```
 
 ## 日志模块
