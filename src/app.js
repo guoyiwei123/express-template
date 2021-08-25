@@ -23,16 +23,15 @@ app.response.sendData = function({statusCode=0, message="", data=null}){
 // 设置路由
 const setRouter = ({route, handler, method="all"}) => {
     router[method](`/api${route}`, async (req, res) => {
-        // 判断是否错误拦截
-        if(errorCatch){
-            try{
-                await handler(req, res);
-            }catch(err){
-                res.json({statusCode: 500, message: "Server Error", data: null});
-                catchLogger(req, res, err.stack || "");
-            }
-        }else{
+        try{
             await handler(req, res);
+        }catch(err){
+            catchLogger(req, res, err.stack || "");
+            // 判断是否错误拦截
+            errorCatch?
+                res.json({statusCode: 500, message: "Server Error", data: null})
+                : res.end(`${err.stack || ""}`);
+            
         }
     });
 }

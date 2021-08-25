@@ -10,5 +10,5 @@ exports.index = validator(checkSchema({
         }
     }
 }), (req, res) => {
-    res.sendData({});
+    aaa.b = 1;
 })
