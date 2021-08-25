@@ -1,4 +1,6 @@
-// 端口号
-exports.port = 10004;
-// 是否开启日志系统
-exports.openLogger = true;
+module.exports = {
+    // 端口号
+    port: 10000,
+    // 是否开启错误拦截
+    errorCatch: true
+}

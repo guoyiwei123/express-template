@@ -1,7 +1,7 @@
 const express = require("express");
 const {json, urlencoded} = require("body-parser");
 const {successLogger, catchLogger, writeLogger} = require("./utils/logger");
-const {port} = require("./config");
+const {port, errorCatch} = require("./config");
 const routes = require("./config/router");
 // 实例化express对象
 const app = express();
@@ -23,11 +23,16 @@ app.response.sendData = function({statusCode=0, message="", data=null}){
 // 设置路由
 const setRouter = ({route, handler, method="all"}) => {
     router[method](`/api${route}`, async (req, res) => {
-        try{
+        // 判断是否错误拦截
+        if(errorCatch){
+            try{
+                await handler(req, res);
+            }catch(err){
+                res.json({statusCode: 500, message: "Server Error", data: null});
+                catchLogger(req, res, err.stack || "");
+            }
+        }else{
             await handler(req, res);
-        }catch(err){
-            res.json({statusCode: 500, message: "Server Error", data: null});
-            catchLogger(req, res, err.stack || "");
         }
     });
 }
