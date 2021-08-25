@@ -10,5 +10,5 @@ exports.index = validator(checkSchema({
         }
     }
 }), (req, res) => {
-    res.json({});
+    res.sendData({});
 })

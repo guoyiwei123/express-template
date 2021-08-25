@@ -7,7 +7,7 @@ exports.validator = (schemas, handler) => {
         const errResList = validateRes.array();
         // 判断错误列表是否为空
         if(errResList.length){
-            return res.json({
+            return res.sendData({
                 statusCode: 400,
                 message: errResList[0].msg,
                 data: null

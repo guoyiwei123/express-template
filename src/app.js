@@ -1,36 +1,37 @@
-const {resolve} = require("path");
 const express = require("express");
 const {json, urlencoded} = require("body-parser");
-const {getBreadthFileList} = require("@ninggure/utils/fileList");
 const {successLogger, catchLogger, writeLogger} = require("./utils/logger");
 const {port} = require("./config");
+const routes = require("./config/router");
 // 实例化express对象
 const app = express();
-const router = express.Router()
+const router = express.Router();
 app.set("trust proxy", true);
 app.set("x-powered-by", false);
 app.use(json());
 app.use(urlencoded({ extended: true })); 
+app.response.sendData = function({statusCode=0, message="", data=null}){
+    const responseData = {
+        statusCode,
+        message,
+        data
+    };
+    successLogger(this, responseData);
+    return this.send(responseData);
+}
 /** 配置路由 **/
-// 控制器路径
-const ctrlPath = resolve(__dirname, "./controllers");
-getBreadthFileList(ctrlPath).forEach((item) => {
-    const path = item.replace(/\.[^.]*$/, '');
-    const ctrlRoute = require(path);
-    const routePath = path.replace(ctrlPath, "").replace("\\", "/").replace(/index$/, "").replace(/index\//, "/");
-    Object.keys(ctrlRoute).forEach((key) => {
-        const route = String(key);
-        router.all(`/api${routePath}${routePath == "/"?"": "/"}${route == "index"?"": route}`, async (req, res) => {
-            try{
-                await ctrlRoute[route](req, res);
-                successLogger(req, res);
-            }catch(err){
-                res.json({statusCode: 500, message: "Server Error", data: null});
-                catchLogger(req, res, err.stack || "");
-            }
-        });
-    })
-});
+// 设置路由
+const setRouter = ({route, handler, method="all"}) => {
+    router[method](`/api${route}`, async (req, res) => {
+        try{
+            await handler(req, res);
+        }catch(err){
+            res.json({statusCode: 500, message: "Server Error", data: null});
+            catchLogger(req, res, err.stack || "");
+        }
+    });
+}
+routes.forEach(setRouter);
 // 404处理
 router.all("*", (req, res) => {
     catchLogger(req, res, "Not Found");
